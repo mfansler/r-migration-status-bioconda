@@ -16,10 +16,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Micromamba (for fast, reproducible conda env)
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-file: envs/bioconda-utils.yml
           cache-environment: true
+          init-shell: bash
+          post-cleanup: 'all'
 
       - name: Clone bioconda/bioconda-recipes (shallow, master branch)
         run: |

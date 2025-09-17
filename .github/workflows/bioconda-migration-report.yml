@@ -1,0 +1,43 @@
+name: Bioconda Migration Report
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    env:
+      MIGRATION_ID: r_base45
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+
+      - name: Set up Micromamba (for fast, reproducible conda env)
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: envs/bioconda-utils.yml
+          cache-environment: true
+
+      - name: Clone bioconda/bioconda-recipes (shallow, master branch)
+        run: |
+          git clone --depth 1 --branch master https://github.com/bioconda/bioconda-recipes.git
+
+      - name: Get current date
+        id: vars
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Run migration script and save output
+        shell: bash -l {0}
+        run: |
+          mkdir -p "$MIGRATION_ID"
+          python bioconda-recipes/scripts/bioconductor/missingCranPackages.py \
+            --migration_id "$MIGRATION_ID" \
+            --format markdown > "$MIGRATION_ID/${{ steps.vars.outputs.date }}.md"
+
+      - name: Commit and push results
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: |
+            Add migration report for $MIGRATION_ID on ${{ steps.vars.outputs.date }}
+          branch: ${{ github.ref_name }}
+          file_pattern: "$MIGRATION_ID/${{ steps.vars.outputs.date }}.md"

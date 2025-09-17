@@ -43,6 +43,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: |
-            Add migration report for $MIGRATION_ID on ${{ steps.vars.outputs.date }}
+            Add migration report for ${{ env.MIGRATION_ID }} on ${{ steps.vars.outputs.date }}
           branch: ${{ github.ref_name }}
-          file_pattern: "$MIGRATION_ID/${{ steps.vars.outputs.date }}.md"
+          file_pattern: "${{ env.MIGRATION_ID }}/${{ steps.vars.outputs.date }}.md"

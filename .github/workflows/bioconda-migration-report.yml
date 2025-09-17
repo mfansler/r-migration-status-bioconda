@@ -3,6 +3,9 @@ name: Bioconda Migration Report
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   generate-report:
     runs-on: ubuntu-latest

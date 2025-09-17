@@ -1,3 +1,4 @@
+name: bioconda_utils
 channels:
   - conda-forge
   - bioconda
